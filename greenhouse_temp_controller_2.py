@@ -37,8 +37,6 @@ from consts import HEATPAD_NIGHTTIME_LOWER_LIMIT
 from consts import daytimeStart
 from consts import daytimeEnd
 
-now           = datetime.now()
-current_time  = now.strftime("%H:%M:%S")
 display       = lcddriver.lcd()
 sensor_type   = 22
 tempSensorPin = 26
@@ -84,7 +82,8 @@ heatpadState = False
 isDaytime    = False
 
 while True:
-    
+    now           = datetime.now()
+    current_time  = now.strftime("%H:%M:%S")    
     print(str(current_time))
     
     display.lcd_clear()
