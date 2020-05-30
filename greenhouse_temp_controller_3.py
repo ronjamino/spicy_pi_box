@@ -45,6 +45,10 @@ display       = lcddriver.lcd()
 sensor_type   = 22
 tempSensorPin = 26
 
+#Variables for MySQL  
+db = mariadb.connect(host="localhost", user="root", passwd="Ykib37lif", db="greenhouse") # replace password with your password  
+ 
+
 pi_fanRelay   = gpiozero.OutputDevice(
                                        PI_FAN_GPIO
                                      , active_high = False
@@ -77,6 +81,11 @@ def measure_gh_temp():
         humidity, ghtemp = Adafruit_DHT.read_retry(sensor_type, tempSensorPin)
         return "%.2f" % round(ghtemp,2)
 
+def dateTime(): #get UNIX time  
+        secs = float(time.time())  
+        secs = secs*1000  
+        return secs
+    
 heartbeat()
 
 pi_fanState  = False
@@ -86,10 +95,12 @@ heatpadState = False
 isDaytime    = False
 
 while True:
+    
+    secs          = dateTime()  
     now           = datetime.now()
     current_time  = now.strftime("%H:%M:%S")    
-    print(str(current_time))
     
+    print(str(current_time))
     display.lcd_clear()
     
     piTemp = float(measure_pi_temp())
@@ -99,6 +110,22 @@ while True:
     ghTemp = float(measure_gh_temp())
     print("GH Temp: " + str(ghTemp))
     display.lcd_display_string("GH Temp: " + str(ghTemp), 1)
+
+    cur = db.cursor()
+    
+    sql = ("""INSERT INTO temperature (datetime, temperature) VALUES (%s,%s)""", (secs, ghTemp))  
+
+    try:  
+        print("Writing to the database...")  
+        cur.execute(*sql)  
+        db.commit()  
+        print("Write complete")
+  
+    except mariadb.Error as error:
+        print("Error: {}".format(error))
+  
+    cur.close()  
+      
     
     #Pi temperature control loop
     if (piTemp > PI_TEMP_UPPER_LIMIT and pi_fanState is False):
@@ -185,3 +212,4 @@ while True:
 
     time.sleep(PI_TEMP_POLL_INTERVAL)
 
+db.close()
