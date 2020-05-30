@@ -116,7 +116,6 @@ while True:
 
     #If it's daytime
     if isDaytime is True:
-        print("daytime")
         
         #If the lights are off, turn them on
         if lightState is False:
@@ -129,28 +128,26 @@ while True:
             gh_fanRelay.on()
             gh_fanState = True
             print("gh fan on")
-        
-            #if its too hot turn the heat mat off
-            if ghTemp > HEATPAD_DAYTIME_UPPER_LIMIT:
-                    heatRelay.off()
-                    heatpadState = False
-                    print("Heating off")
-                    
+                         
         #if it's too cool turn the fan off
-        elif ghTemp < GREENHOUSE_FAN_DAYTIME_LOWER_LIMIT and gh_fanState is True:
+        if ghTemp < GREENHOUSE_FAN_DAYTIME_LOWER_LIMIT and gh_fanState is True:
             gh_fanRelay.off()
             gh_fanState = False
             print("gh fan off")
 
-            #if its too cool turn the heat mat on
-            if ghTemp < HEATPAD_DAYTIME_LOWER_LIMIT:
-                    heatRelay.on()
-                    heatpadState = True
-                    print("Heating on")
+        #if its too cool turn the heat mat on
+        if ghTemp < HEATPAD_DAYTIME_LOWER_LIMIT and heatpadState is False:
+            heatRelay.on()
+            heatpadState = True
+            print("Heating on")
 
-    
+        #if its too hot turn the heat mat off
+        if ghTemp > HEATPAD_DAYTIME_UPPER_LIMIT and heatpadState is True:
+            heatRelay.off()
+            heatpadState = False
+            print("Heating off")
+                
     elif isDaytime is False:
-        print("nighttime")
         
         #If the lights are on, turn them off
         if lightState is True:
@@ -163,25 +160,23 @@ while True:
             gh_fanRelay.on()
             gh_fanState = True
             print("gh fan on")
-        
-            #if its too hot turn the heat mat off
-            if ghTemp > HEATPAD_NIGHTTIME_UPPER_LIMIT:
-                    heatRelay.off()
-                    heatpadState = False
-                    print("Heating off")
                     
         #if it's too cool turn the fan off
-        elif ghTemp < GREENHOUSE_FAN_NIGHTTIME_LOWER_LIMIT and gh_fanState is True:
+        if ghTemp < GREENHOUSE_FAN_NIGHTTIME_LOWER_LIMIT and gh_fanState is True:
             gh_fanRelay.off()
             gh_fanState = False
             print("gh fan off")
 
-            #if its too cool turn the heat mat on
-            if ghTemp > HEATPAD_NIGHTTIME_LOWER_LIMIT:
-                    heatRelay.on()
-                    heatpadState = True
-                    print("Heating on")
-
-    
+        #if its too hot turn the heat mat off
+        if ghTemp > HEATPAD_NIGHTTIME_UPPER_LIMIT and heatpadState is True:
+            heatRelay.off()
+            heatpadState = False
+            print("Heating off")
+            
+        #if its too cool turn the heat mat on
+        if ghTemp < HEATPAD_NIGHTTIME_LOWER_LIMIT and heatpadState is False:
+            heatRelay.on()
+            heatpadState = True
+            print("Heating on")
 
     time.sleep(PI_TEMP_POLL_INTERVAL)

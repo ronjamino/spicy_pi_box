@@ -30,15 +30,28 @@ def runPump():
     time.sleep(PUMP_RUNTIME) # Keep pump running for PUMP_RUNTIME seconds.
     pumpRelay.off()
     
+    now           = datetime.now()
+    current_time  = now.strftime("%H:%M:%S")
+    
     # Log this run
     entry = { 'timestamp': str(datetime.now().timestamp()),
-                  'event': 'Pump Run', 'duration': str(PUMP_RUNTIME)}
+              'time' : str(current_time),
+              'event'    : 'Pump Run',
+              'duration' : str(PUMP_RUNTIME)
+            }
     
     db.logPumpRun(entry)
 
 def heartbeat():
+        
+    now           = datetime.now()
+    current_time  = now.strftime("%H:%M:%S")
+    
     entry = { 'timestamp': str(datetime.now().timestamp()),
-                  'event': 'Heartbeat', 'duration': '1'}
+              'time' : str(current_time),
+              'event'    : 'Heartbeat',
+              'duration' : '1'
+            }
     
     db.logPumpRun(entry)
     # threading.Timer(600, heartbeat).start() - Handled by crontab
