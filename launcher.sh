@@ -1,4 +1,4 @@
 cd /
 cd home/pi/greenhouse
-sudo python3 greenhouse_temp_controller_2.py
+sudo python3 /home/pi/greenhouse/greenhouse_temp_controller_3.py
 cd /
